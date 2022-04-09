@@ -4,15 +4,14 @@ on:
   push:
     branches:
       - main
-      - master
   pull_request:
 
 env:
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.MINEIROS_TESTING_AWS_SECRET_ACCESS_KEY }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.MINEIROS_TESTING_AWS_ACCESS_KEY_ID }}
+  GOOGLE_CREDENTIALS: ${{ secrets.MINEIROS_TESTING_GCP_SA_KEY_FILE }}
+  TF_VAR_project: ${{ secrets.MINEIROS_TESTING_GCP_PROJECT }}
 
 concurrency:
-  group: terraform-module-template
+  group: terraform-google-gke-autopilot-cluster
   cancel-in-progress: false
 
 jobs:
@@ -34,18 +33,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-  #     - name: Check for Terraform file changes
-  #       uses: getsentry/paths-filter@v2
-  #       id: changes
-  #       with:
-  #         token: ${{ github.token }}
-  #         filters: |
-  #           terraform:
-  #             - '**/*.tf'
-  #             - '**/*.go'
-  #             - 'go.mod'
-  #             - 'go.sum'
+      - name: Check for Terraform file changes
+        uses: getsentry/paths-filter@v2
+        id: changes
+        with:
+          token: ${{ github.token }}
+          filters: |
+            terraform:
+              - '**/*.tf'
+              - '**/*.go'
+              - 'go.mod'
+              - 'go.sum'
 
-  #     - name: Run Unit Tests
-  #       if: steps.changes.outputs.terraform == 'true'
-  #       run: make test/unit-tests
+      - name: Run Unit Tests
+        if: steps.changes.outputs.terraform == 'true'
+        run: make test/unit-tests

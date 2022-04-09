@@ -12,10 +12,7 @@ func TestUnitDisabled(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "unit-disabled",
-		Vars: map[string]interface{}{
-			"aws_region": "us-east-1",
-		},
-		Upgrade: true,
+		Upgrade:      true,
 	}
 
 	defer terraform.Destroy(t, terraformOptions)

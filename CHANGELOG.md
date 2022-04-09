@@ -13,6 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add support for `null_resource` Terraform resource
 
-[unreleased]: https://github.com/mineiros-io/terraform-module-template/compare/v0.0.1...HEAD
-<!-- [0.0.2]: https://github.com/mineiros-io/terraform-module-template/compare/v0.0.1...v0.0.2 -->
-[0.0.1]: https://github.com/mineiros-io/terraform-module-template/releases/tag/v0.0.1
+[unreleased]: https://github.com/mineiros-io/terraform-google-gke-autopilot-cluster/compare/v0.0.1...HEAD
+<!-- [0.0.2]: https://github.com/mineiros-io/terraform-google-gke-autopilot-cluster/compare/v0.0.1...v0.0.2 -->
+[0.0.1]: https://github.com/mineiros-io/terraform-google-gke-autopilot-cluster/releases/tag/v0.0.1
