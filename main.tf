@@ -9,6 +9,8 @@ resource "google_container_cluster" "cluster" {
 
   project = local.project
 
+  enable_autopilot = true
+
   network    = var.network
   subnetwork = var.subnetwork
 
@@ -183,19 +185,6 @@ resource "google_container_cluster" "cluster" {
       }
     }
   }
-
-  # --------------------------------------------------------------------------------------------------------------------
-  # REMOVE DEFAULT NODE-POOL AFTER INITIAL CREATION
-  #
-  # We create the smallest possible default node-pool and delete it right away
-  # since there is no way not to create the default node pool.
-  # Node pools should be created using the terraform-google-gke-node-pool module
-  #
-  # For details please see https://github.com/mineiros-io/terraform-google-gke-node-pool
-  # --------------------------------------------------------------------------------------------------------------------
-
-  initial_node_count       = 1
-  remove_default_node_pool = true
 
   # --------------------------------------------------------------------------------------------------------------------
   # Resource usage export to Bigquery
