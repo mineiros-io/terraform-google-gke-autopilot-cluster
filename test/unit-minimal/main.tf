@@ -15,12 +15,6 @@ variable "region" {
   default     = "europe-west3"
 }
 
-variable "zone" {
-  type        = string
-  description = "(Optional) The GCP region zone to create all resources in."
-  default     = "europe-west3-a"
-}
-
 terraform {
   required_providers {
     google = {
@@ -33,7 +27,6 @@ terraform {
 provider "google" {
   project = var.project
   region  = var.region
-  zone    = var.zone
 }
 
 # Networking
@@ -96,6 +89,7 @@ module "test" {
 
   # add only required arguments and no optional arguments
   name       = "gke-unit-minimal"
+  location   = var.region
   network    = module.vpc.vpc.self_link
   subnetwork = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
 

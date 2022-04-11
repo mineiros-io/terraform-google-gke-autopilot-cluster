@@ -123,22 +123,10 @@ module "test" {
   # creates a regional cluster, for details please see https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
   location = var.region
 
-  # configures the zones in which nodes can be deployed in
-  node_locations = [
-    "${var.region}-a",
-    "${var.region}-b",
-  ]
-
   min_master_version = "latest"
 
   master_ipv4_cidr_block = "10.4.96.0/28"
   networking_mode        = "VPC_NATIVE"
-
-  addon_network_policy_config = true
-  network_policy = {
-    enabled  = true
-    provider = "CALICO"
-  }
 
   ip_allocation_policy = {
     cluster_secondary_range_name  = local.subnet.secondary_ip_ranges.pods.name
@@ -148,17 +136,11 @@ module "test" {
   # cluster_ipv4_cidr = local.subnet.secondary_ip_ranges.pods.cidr_range
   rbac_security_identity_group = "gke-security-groups@mineiros.io"
 
-  default_max_pods_per_node            = 110
-  enable_binary_authorization          = true
   enable_kubernetes_alpha              = false
-  enable_tpu                           = true
-  enable_legacy_abac                   = true
-  enable_shielded_nodes                = false
   enable_private_nodes                 = true
   enable_private_endpoint              = true
   enable_network_egress_metering       = true
   enable_resource_consumption_metering = true
-  enable_intranode_visibility          = true
   master_authorized_networks_config = {
     cidr_blocks = [
       {
@@ -195,13 +177,6 @@ module "test" {
       }
     ]
   }
-
-  addon_horizontal_pod_autoscaling = false
-  addon_http_load_balancing        = false
-  addon_filestore_csi_driver       = true
-  # TODO Remove
-  # https://github.com/mineiros-io/terraform-google-gke-autopilot-cluster/runs/5869380367?check_suite_focus=true
-  # or add loadbalancer property
 
   module_timeouts = {
     google_container_cluster = {
