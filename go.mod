@@ -1,4 +1,4 @@
-module github.com/mineiros-io/terraform-module-template
+module github.com/mineiros-io/terraform-google-gke-autopilot-cluster
 
 go 1.14
 

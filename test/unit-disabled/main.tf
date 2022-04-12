@@ -4,23 +4,22 @@
 # The purpose is to verify no resources are created when the module is disabled.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-variable "aws_region" {
-  description = "(Optional) The AWS region in which all resources will be created."
+variable "project" {
   type        = string
-  default     = "us-east-1"
+  description = "(Required) The ID of the project in which the resource belongs."
 }
 
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.0"
     }
   }
 }
 
-provider "aws" {
-  region = var.aws_region
+provider "google" {
+  project = var.project
 }
 
 # DO NOT RENAME MODULE NAME
@@ -30,8 +29,13 @@ module "test" {
   module_enabled = false
 
   # add all required arguments
+  name       = "gke-unit-disabled"
+  network    = "disabled"
+  subnetwork = "disabled"
 
   # add all optional arguments that create additional resources
+
+  # add only required arguments and no optional arguments
 }
 
 # outputs generate non-idempotent terraform plans so we disable them for now unless we need them.

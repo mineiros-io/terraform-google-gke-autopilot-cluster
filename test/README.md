@@ -13,19 +13,19 @@ of the modules that ship with this repository.
 
 We are using [Terratest] for automated tests that are located in the
 [`test/` directory][testdirectory]. Terratest deploys _real_ infrastructure
-(e.g., servers) in a _real_ environment (e.g., AWS).
+(e.g., servers) in a _real_ environment (e.g., GCP).
 
 The basic usage pattern for writing automated tests with Terratest is to:
 
 1. Write tests using Go's built-in [package testing]: you create a file ending
    in `_test.go` and run tests with the `go test` command.
 2. Use Terratest to execute your _real_ IaC tools (e.g., Terraform, Packer, etc.)
-   to deploy _real_ infrastructure (e.g., servers) in a _real_ environment (e.g., AWS).
+   to deploy _real_ infrastructure (e.g., servers) in a _real_ environment (e.g., GCP).
 3. Validate that the infrastructure works correctly in that environment by
    making HTTP requests, API calls, SSH connections, etc.
 4. Undeploy everything at the end of the test.
 
-**Note #1**: Many of these tests create real resources in an AWS account.
+**Note #1**: Many of these tests create real resources in a GCP project.
 That means they cost money to run, especially if you don't clean up after
 yourself. Please be considerate of the resources you create and take extra care
 to clean everything up when you're done!
@@ -48,14 +48,14 @@ Alternatively, you can also run the tests without Docker.
 ### Run the tests with Docker
 
 1. Install [Docker]
-2. Set your AWS credentials as environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+2. Set your GCP credentials as environment variables: `GOOGLE_CREDENTIALS`
 3. Run `make docker-run-tests`
 
 ### Run the tests without Docker
 
 1. Install the latest version of [Go].
 2. Install [Terraform].
-3. Set your AWS credentials as environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+3. Set your GCP credentials as environment variables: `GOOGLE_CREDENTIALS` 
 4. Install go dependencies: `go mod download`
 5. Run all tests: `go test -v -count 1 -timeout 45m -parallel 128 ./test/...`
    or use the convenient `make test/unit-tests` Makefile target.
@@ -63,9 +63,9 @@ Alternatively, you can also run the tests without Docker.
 
 <!-- References -->
 
-[makefile]: https://github.com/mineiros-io/terraform-module-template/blob/main/Makefile
-[testdirectory]: https://github.com/mineiros-io/terraform-module-template/tree/main/test
-[homepage]: https://mineiros.io/?ref=terraform-module-template
+[makefile]: https://github.com/mineiros-io/terraform-google-monitoring-notification-channel/blob/main/Makefile
+[testdirectory]: https://github.com/mineiros-io/terraform-google-monitoring-notification-channel/tree/main/test
+[homepage]: https://mineiros.io/?ref=terraform-google-monitoring-notification-channel
 [terratest]: https://github.com/gruntwork-io/terratest
 [package testing]: https://golang.org/pkg/testing/
 [docker]: https://docs.docker.com/get-started/
