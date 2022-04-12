@@ -106,17 +106,9 @@ section {
       variable "location" {
         type        = string
         description = <<-END
-          The location (region or zone) in which the cluster master will be
-          created, as well as the default node location.
-          If you specify a zone (such as `us-central1-a`), the cluster will be
-          a zonal cluster with a single cluster master.
-
-          If you specify a region (such as `us-west1`), the cluster will be a
-          regional cluster with multiple masters spread across zones in the
-          region, and with default node locations in those zones as well.
-
-          For the differences between zonal and regional clusters, please see
-          https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
+          The location region in which the cluster master will be
+          created. Please note that autopilot only supports
+          [regional clusters](https://cloud.google.com/kubernetes-engine/docs/concepts/regional-clusters).
         END
       }
 
@@ -159,17 +151,6 @@ section {
         description = <<-END
           The ID of the project in which the resource belongs.
           If it is not set, the provider project is used.
-        END
-      }
-
-      variable "rbac_security_identity_group" {
-        type        = string
-        description = <<-END
-          The name of the RBAC security identity group for use with Google
-          security groups in Kubernetes RBAC. Group name must be in format
-          `gke-security-groups@yourdomain.com`.
-
-          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
         END
       }
 
@@ -266,17 +247,6 @@ section {
         END
       }
 
-      variable "node_locations" {
-        type        = set(string)
-        default     = []
-        description = <<-END
-          A set of zones in which the cluster's nodes are located.
-          Nodes must be in the region of their regional cluster or in the same
-          region as their cluster's zone for zonal clusters.
-          If this is specified for a zonal cluster, omit the cluster's zone.
-        END
-      }
-
       variable "master_authorized_networks_config" {
         type           = object(master_authorized_networks_config)
         description    = <<-END
@@ -319,103 +289,6 @@ section {
           }
         }
       }
-
-      variable "enable_vertical_pod_autoscaling" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable vertical Pod autoscaling in your cluster.
-
-          For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
-        END
-      }
-
-      variable "addon_horizontal_pod_autoscaling" {
-        type        = bool
-        default     = true
-        description = <<-END
-          Whether to enable horizontal Pod Autoscaling addon,
-          which increases or decreases the number of replica pods a
-          replication controller has based on the resource usage of the existing pods.
-
-          For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler
-        END
-      }
-
-      variable "addon_http_load_balancing" {
-        type        = bool
-        default     = true
-        description = <<-END
-          Whether to enable the the HTTP (L7) load balancing controller addon,
-          which makes it easy to set up HTTP load balancers for services in a cluster..
-
-          For details please https://cloud.google.com/kubernetes-engine/docs/concepts/ingress
-        END
-      }
-
-      variable "addon_network_policy_config" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable the network policy addon for the master.
-
-          Network policies can be used to control the communication between
-          your cluster's Pods and Services. You define a network policy by
-          using the Kubernetes Network Policy API to create Pod-level firewall
-          rules. These firewall rules determine which Pods and Services can
-          access one another inside your cluster.
-
-          This must be enabled in order to enable network policy for the nodes.
-          To enable this, you must also define a `network_policy` block, otherwise
-          nothing will happen. It can only be disabled if the nodes already do
-          not have network policies enabled.
-
-          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy
-        END
-      }
-
-      variable "network_policy" {
-        type           = object(network_policy)
-        description    = <<-END
-          Configuration options for the network policy addon.
-          Can only be used if the network policy addon is enabled
-          by enabling `addon_network_policy_config`.
-        END
-        readme_example = <<-END
-          network_policy = {
-            enabled  = true
-            provider = "CALICO"
-          }
-        END
-
-        attribute "enabled" {
-          type        = bool
-          default     = false
-          description = <<-END
-            Whether network policy is enabled on the cluster.
-          END
-        }
-
-        attribute "provider" {
-          type        = string
-          default     = "CALICO"
-          description = <<-END
-            The selected network policy provider.
-          END
-        }
-      }
-
-      variable "addon_filestore_csi_driver" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable the Filestore CSI driver addon, which allows the
-          usage of filestore instance as volumes.
-
-          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/filestore-csi-driver
-        END
-      }
-
 
       variable "maintenance_policy" {
         type        = object(maintenance_policy)
@@ -641,29 +514,6 @@ section {
         END
       }
 
-      variable "default_max_pods_per_node" {
-        type        = number
-        default     = 110
-        description = <<-END
-          The maximum number of pods to schedule per node.
-          GKE has a hard limit of 110 Pods per node.
-        END
-      }
-
-      variable "enable_intranode_visibility" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether Intra-node visibility is enabled for this cluster.
-          Intranode visibility configures networking on each node in the
-          cluster so that traffic sent from one Pod to another Pod is
-          processed by the cluster's Virtual Private Cloud (VPC) network,
-          even if the Pods are on the same node.
-
-          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
-        END
-      }
-
       variable "enable_private_endpoint" {
         type        = bool
         default     = false
@@ -709,27 +559,10 @@ section {
 
       variable "release_channel" {
         type        = string
-        default     = "UNSPECIFIED"
+        default     = "STABLE"
         description = <<-END
           The release channel of this cluster. Accepted values are
-          `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`.
-        END
-      }
-
-      variable "enable_shielded_nodes" {
-        type        = bool
-        default     = true
-        description = <<-END
-          Whether to enable Shielded Nodes features on all nodes in this cluster.
-          For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/release-channels
-        END
-      }
-
-      variable "enable_binary_authorization" {
-        type        = bool
-        default     = false
-        description = <<-END
-          Whether to enable BinAuthZ Admission controller.
+          `RAPID`, `REGULAR` and `STABLE`.
         END
       }
     }

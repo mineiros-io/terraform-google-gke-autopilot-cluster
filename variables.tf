@@ -43,21 +43,9 @@ variable "addon_http_load_balancing" {
   default     = true
 }
 
-variable "addon_network_policy_config" {
-  type        = bool
-  description = "(Optional) Whether to enable the network policy addon."
-  default     = false
-}
-
-variable "addon_filestore_csi_driver" {
-  type        = bool
-  description = "(Optional) Whether to enable the Filestore CSI driver addon, which allows the usage of filestore instance as volumes."
-  default     = false
-}
-
 variable "location" {
   type        = string
-  description = "(Optional) The location (region or zone) in which the cluster master will be created, as well as the default node location. If you specify a zone (such as 'us-central1-a'), the cluster will be a zonal cluster with a single cluster master. If you specify a region (such as us-west1), the cluster will be a regional cluster with multiple masters spread across zones in the region, and with default node locations in those zones as well."
+  description = "(Optional) The region in which the cluster master will be created."
   default     = null
 }
 
@@ -79,46 +67,10 @@ variable "description" {
   default     = ""
 }
 
-variable "node_locations" {
-  type        = set(string)
-  description = "(Optional) A set of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. If this is specified for a zonal cluster, omit the cluster's zone."
-  default     = []
-}
-
-variable "default_max_pods_per_node" {
-  type        = number
-  description = "(Optional) The default maximum number of pods per node in this cluster. This doesn't work on routes-based clusters, clusters that don't have IP Aliasing enabled. For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/flexible-pod-cidr"
-  default     = null
-}
-
-variable "enable_binary_authorization" {
-  type        = bool
-  description = "(Optional) Enable BinAuthZ Admission controller"
-  default     = false
-}
-
 variable "enable_kubernetes_alpha" {
   type        = bool
   description = "(Optional) Whether to enable Kubernetes Alpha features for this cluster. Note that when this option is enabled, the cluster cannot be upgraded and will be automatically deleted after 30 days."
   default     = false
-}
-
-variable "enable_tpu" {
-  type        = bool
-  description = "(Optional) Whether to enable Cloud TPU resources in this cluster. For details please see https://cloud.google.com/tpu/docs/kubernetes-engine-setup"
-  default     = false
-}
-
-variable "enable_legacy_abac" {
-  type        = bool
-  description = "(Optional) Whether the ABAC authorizer is enabled for this cluster. When enabled, identities in the system, including service accounts, nodes, and controllers, will have statically granted permissions beyond those provided by the RBAC configuration or IAM."
-  default     = false
-}
-
-variable "enable_shielded_nodes" {
-  type        = bool
-  description = "(Optional) Enable Shielded Nodes features on all nodes in this cluster"
-  default     = true
 }
 
 variable "ip_allocation_policy" {
@@ -218,18 +170,6 @@ variable "maintenance_policy" {
   default     = null
 }
 
-variable "network_policy" {
-  type = any
-  # type = object({
-  #   # (Required) Whether network policy is enabled on the cluster.
-  #   enabled = bool
-  #   # (Optional) The selected network policy provider. Defaults to `CALICO`.
-  #   provider = optional(string)
-  # })
-  description = "(Optional) Configuration options for the NetworkPolicy feature."
-  default     = null
-}
-
 variable "rbac_security_identity_group" {
   description = "(Optional) The name of the RBAC security identity group for use with Google security groups in Kubernetes RBAC. Group name must be in format 'gke-security-groups@yourdomain.com'."
   type        = string
@@ -254,12 +194,6 @@ variable "master_authorized_networks_config" {
   default     = null
 }
 
-variable "enable_vertical_pod_autoscaling" {
-  type        = bool
-  description = "(Optional) If enabled, Vertical Pod Autoscaling automatically adjusts the resources of pods controlled by it."
-  default     = false
-}
-
 variable "resource_usage_export_bigquery_dataset_id" {
   type        = string
   description = "(Optional) The ID of a BigQuery Dataset for using BigQuery as the destination of resource usage export."
@@ -282,12 +216,6 @@ variable "resource_labels" {
   type        = map(string)
   description = "(Optional) The GCE resource labels (a map of key/value pairs) to be applied to the cluster"
   default     = {}
-}
-
-variable "enable_intranode_visibility" {
-  type        = bool
-  description = "(Optional) Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network."
-  default     = false
 }
 
 variable "private_ipv6_google_access" {
@@ -321,12 +249,12 @@ variable "master_ipv4_cidr_block" {
 
 variable "release_channel" {
   type        = string
-  description = "(Optional) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `UNSPECIFIED`."
-  default     = "UNSPECIFIED"
+  description = "(Optional) The release channel of this cluster. Accepted values are `RAPID`, `REGULAR` and `STABLE`."
+  default     = "STABLE"
 
   validation {
-    condition     = var.release_channel != null ? can(regex("^UNSPECIFIED|RAPID|REGULAR|STABLE$", var.release_channel)) : true
-    error_message = "The release_channel variable must be either set to 'UNSPECIFIED', 'RAPID', 'REGULAR' or 'STABLE'."
+    condition     = var.release_channel != null ? can(regex("^RAPID|REGULAR|STABLE$", var.release_channel)) : true
+    error_message = "The release_channel variable must be either set to 'RAPID', 'REGULAR' or 'STABLE'."
   }
 }
 

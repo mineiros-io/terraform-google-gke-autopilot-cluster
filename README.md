@@ -80,17 +80,9 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 - [**`location`**](#var-location): *(Optional `string`)*<a name="var-location"></a>
 
-  The location (region or zone) in which the cluster master will be
-  created, as well as the default node location.
-  If you specify a zone (such as `us-central1-a`), the cluster will be
-  a zonal cluster with a single cluster master.
-
-  If you specify a region (such as `us-west1`), the cluster will be a
-  regional cluster with multiple masters spread across zones in the
-  region, and with default node locations in those zones as well.
-
-  For the differences between zonal and regional clusters, please see
-  https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters
+  The location region in which the cluster master will be
+  created. Please note that autopilot only supports
+  [regional clusters](https://cloud.google.com/kubernetes-engine/docs/concepts/regional-clusters).
 
 - [**`network`**](#var-network): *(Optional `string`)*<a name="var-network"></a>
 
@@ -122,14 +114,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   The ID of the project in which the resource belongs.
   If it is not set, the provider project is used.
-
-- [**`rbac_security_identity_group`**](#var-rbac_security_identity_group): *(Optional `string`)*<a name="var-rbac_security_identity_group"></a>
-
-  The name of the RBAC security identity group for use with Google
-  security groups in Kubernetes RBAC. Group name must be in format
-  `gke-security-groups@yourdomain.com`.
-
-  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
 
 - [**`min_master_version`**](#var-min_master_version): *(Optional `string`)*<a name="var-min_master_version"></a>
 
@@ -206,15 +190,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `""`.
 
-- [**`node_locations`**](#var-node_locations): *(Optional `set(string)`)*<a name="var-node_locations"></a>
-
-  A set of zones in which the cluster's nodes are located.
-  Nodes must be in the region of their regional cluster or in the same
-  region as their cluster's zone for zonal clusters.
-  If this is specified for a zonal cluster, omit the cluster's zone.
-
-  Default is `[]`.
-
 - [**`master_authorized_networks_config`**](#var-master_authorized_networks_config): *(Optional `object(master_authorized_networks_config)`)*<a name="var-master_authorized_networks_config"></a>
 
   Configuration for handling external access control plane of the cluster.
@@ -252,90 +227,6 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`display_name`**](#attr-master_authorized_networks_config-cidr_blocks-display_name): *(Optional `string`)*<a name="attr-master_authorized_networks_config-cidr_blocks-display_name"></a>
 
       Field for users to identify CIDR blocks.
-
-- [**`enable_vertical_pod_autoscaling`**](#var-enable_vertical_pod_autoscaling): *(Optional `bool`)*<a name="var-enable_vertical_pod_autoscaling"></a>
-
-  Whether to enable vertical Pod autoscaling in your cluster.
-
-  For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
-
-  Default is `false`.
-
-- [**`addon_horizontal_pod_autoscaling`**](#var-addon_horizontal_pod_autoscaling): *(Optional `bool`)*<a name="var-addon_horizontal_pod_autoscaling"></a>
-
-  Whether to enable horizontal Pod Autoscaling addon,
-  which increases or decreases the number of replica pods a
-  replication controller has based on the resource usage of the existing pods.
-
-  For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler
-
-  Default is `true`.
-
-- [**`addon_http_load_balancing`**](#var-addon_http_load_balancing): *(Optional `bool`)*<a name="var-addon_http_load_balancing"></a>
-
-  Whether to enable the the HTTP (L7) load balancing controller addon,
-  which makes it easy to set up HTTP load balancers for services in a cluster..
-
-  For details please https://cloud.google.com/kubernetes-engine/docs/concepts/ingress
-
-  Default is `true`.
-
-- [**`addon_network_policy_config`**](#var-addon_network_policy_config): *(Optional `bool`)*<a name="var-addon_network_policy_config"></a>
-
-  Whether to enable the network policy addon for the master.
-
-  Network policies can be used to control the communication between
-  your cluster's Pods and Services. You define a network policy by
-  using the Kubernetes Network Policy API to create Pod-level firewall
-  rules. These firewall rules determine which Pods and Services can
-  access one another inside your cluster.
-
-  This must be enabled in order to enable network policy for the nodes.
-  To enable this, you must also define a `network_policy` block, otherwise
-  nothing will happen. It can only be disabled if the nodes already do
-  not have network policies enabled.
-
-  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy
-
-  Default is `false`.
-
-- [**`network_policy`**](#var-network_policy): *(Optional `object(network_policy)`)*<a name="var-network_policy"></a>
-
-  Configuration options for the network policy addon.
-  Can only be used if the network policy addon is enabled
-  by enabling `addon_network_policy_config`.
-
-  Example:
-
-  ```hcl
-  network_policy = {
-    enabled  = true
-    provider = "CALICO"
-  }
-  ```
-
-  The `network_policy` object accepts the following attributes:
-
-  - [**`enabled`**](#attr-network_policy-enabled): *(Optional `bool`)*<a name="attr-network_policy-enabled"></a>
-
-    Whether network policy is enabled on the cluster.
-
-    Default is `false`.
-
-  - [**`provider`**](#attr-network_policy-provider): *(Optional `string`)*<a name="attr-network_policy-provider"></a>
-
-    The selected network policy provider.
-
-    Default is `"CALICO"`.
-
-- [**`addon_filestore_csi_driver`**](#var-addon_filestore_csi_driver): *(Optional `bool`)*<a name="var-addon_filestore_csi_driver"></a>
-
-  Whether to enable the Filestore CSI driver addon, which allows the
-  usage of filestore instance as volumes.
-
-  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/filestore-csi-driver
-
-  Default is `false`.
 
 - [**`maintenance_policy`**](#var-maintenance_policy): *(Optional `object(maintenance_policy)`)*<a name="var-maintenance_policy"></a>
 
@@ -519,25 +410,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `{}`.
 
-- [**`default_max_pods_per_node`**](#var-default_max_pods_per_node): *(Optional `number`)*<a name="var-default_max_pods_per_node"></a>
-
-  The maximum number of pods to schedule per node.
-  GKE has a hard limit of 110 Pods per node.
-
-  Default is `110`.
-
-- [**`enable_intranode_visibility`**](#var-enable_intranode_visibility): *(Optional `bool`)*<a name="var-enable_intranode_visibility"></a>
-
-  Whether Intra-node visibility is enabled for this cluster.
-  Intranode visibility configures networking on each node in the
-  cluster so that traffic sent from one Pod to another Pod is
-  processed by the cluster's Virtual Private Cloud (VPC) network,
-  even if the Pods are on the same node.
-
-  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
-
-  Default is `false`.
-
 - [**`enable_private_endpoint`**](#var-enable_private_endpoint): *(Optional `bool`)*<a name="var-enable_private_endpoint"></a>
 
   Whether the master's internal IP address is used as the cluster endpoint.
@@ -571,22 +443,9 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`release_channel`**](#var-release_channel): *(Optional `string`)*<a name="var-release_channel"></a>
 
   The release channel of this cluster. Accepted values are
-  `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`.
+  `RAPID`, `REGULAR` and `STABLE`.
 
-  Default is `"UNSPECIFIED"`.
-
-- [**`enable_shielded_nodes`**](#var-enable_shielded_nodes): *(Optional `bool`)*<a name="var-enable_shielded_nodes"></a>
-
-  Whether to enable Shielded Nodes features on all nodes in this cluster.
-  For details please see https://cloud.google.com/kubernetes-engine/docs/concepts/release-channels
-
-  Default is `true`.
-
-- [**`enable_binary_authorization`**](#var-enable_binary_authorization): *(Optional `bool`)*<a name="var-enable_binary_authorization"></a>
-
-  Whether to enable BinAuthZ Admission controller.
-
-  Default is `false`.
+  Default is `"STABLE"`.
 
 ### Module Configuration
 

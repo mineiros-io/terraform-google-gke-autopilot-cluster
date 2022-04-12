@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add support for `null_resource` Terraform resource
+- Add support for `google_container_cluster` with autopilot enabled
 
 [unreleased]: https://github.com/mineiros-io/terraform-google-gke-autopilot-cluster/compare/v0.0.1...HEAD
 <!-- [0.0.2]: https://github.com/mineiros-io/terraform-google-gke-autopilot-cluster/compare/v0.0.1...v0.0.2 -->

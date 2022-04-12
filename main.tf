@@ -9,6 +9,8 @@ resource "google_container_cluster" "cluster" {
 
   project = local.project
 
+  enable_autopilot = true
+
   network    = var.network
   subnetwork = var.subnetwork
 
@@ -16,18 +18,14 @@ resource "google_container_cluster" "cluster" {
   description     = var.description
   resource_labels = var.resource_labels
 
-  location       = var.location
-  node_locations = var.node_locations
+  location = var.location
 
-  networking_mode             = var.networking_mode
-  enable_intranode_visibility = var.enable_intranode_visibility
-  private_ipv6_google_access  = var.private_ipv6_google_access
+  networking_mode            = var.networking_mode
+  private_ipv6_google_access = var.private_ipv6_google_access
 
-  enable_shielded_nodes       = var.enable_shielded_nodes
-  enable_binary_authorization = var.enable_binary_authorization
-  enable_kubernetes_alpha     = var.enable_kubernetes_alpha
-  enable_tpu                  = var.enable_tpu
-  enable_legacy_abac          = var.enable_legacy_abac
+  enable_kubernetes_alpha = var.enable_kubernetes_alpha
+  enable_tpu              = false
+  enable_legacy_abac      = false
 
   # TODO: use data source to allow fuzzy version specification
   min_master_version = var.min_master_version
@@ -35,25 +33,7 @@ resource "google_container_cluster" "cluster" {
   logging_service    = var.logging_service
   monitoring_service = var.monitoring_service
 
-  cluster_ipv4_cidr         = var.cluster_ipv4_cidr
-  default_max_pods_per_node = var.default_max_pods_per_node
-
-  dynamic "authenticator_groups_config" {
-    for_each = var.rbac_security_identity_group != null ? [1] : []
-
-    content {
-      security_group = var.rbac_security_identity_group
-    }
-  }
-
-  dynamic "network_policy" {
-    for_each = var.network_policy != null ? [var.network_policy] : []
-
-    content {
-      enabled  = try(network_policy.value.enabled, false)
-      provider = try(network_policy.value.provider, "CALICO")
-    }
-  }
+  cluster_ipv4_cidr = var.cluster_ipv4_cidr
 
   dynamic "release_channel" {
     for_each = var.release_channel != null ? [1] : []
@@ -79,12 +59,8 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
-  dynamic "vertical_pod_autoscaling" {
-    for_each = var.enable_vertical_pod_autoscaling != null ? [1] : []
-
-    content {
-      enabled = var.enable_vertical_pod_autoscaling
-    }
+  vertical_pod_autoscaling {
+    enabled = true
   }
 
   # --------------------------------------------------------------------------------------------------------------------
@@ -119,19 +95,11 @@ resource "google_container_cluster" "cluster" {
 
   addons_config {
     http_load_balancing {
-      disabled = !var.addon_http_load_balancing
+      disabled = false
     }
 
     horizontal_pod_autoscaling {
-      disabled = !var.addon_horizontal_pod_autoscaling
-    }
-
-    network_policy_config {
-      disabled = !var.addon_network_policy_config
-    }
-
-    gcp_filestore_csi_driver_config {
-      enabled = var.addon_filestore_csi_driver
+      disabled = false
     }
   }
 
@@ -185,19 +153,6 @@ resource "google_container_cluster" "cluster" {
   }
 
   # --------------------------------------------------------------------------------------------------------------------
-  # REMOVE DEFAULT NODE-POOL AFTER INITIAL CREATION
-  #
-  # We create the smallest possible default node-pool and delete it right away
-  # since there is no way not to create the default node pool.
-  # Node pools should be created using the terraform-google-gke-node-pool module
-  #
-  # For details please see https://github.com/mineiros-io/terraform-google-gke-node-pool
-  # --------------------------------------------------------------------------------------------------------------------
-
-  initial_node_count       = 1
-  remove_default_node_pool = true
-
-  # --------------------------------------------------------------------------------------------------------------------
   # Resource usage export to Bigquery
   # --------------------------------------------------------------------------------------------------------------------
 
@@ -243,10 +198,6 @@ resource "google_container_cluster" "cluster" {
       key_name = var.database_encryption_key_name
       state    = var.database_encryption_key_name != "" ? "ENCRYPTED" : "DECRYPTED"
     }
-  }
-
-  workload_identity_config {
-    workload_pool = "${local.project}.svc.id.goog"
   }
 
   lifecycle {
