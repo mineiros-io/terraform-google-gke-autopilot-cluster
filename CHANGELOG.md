@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for `authenticator_groups_config`
+
 ## Changed
 
 - BREAKING: Upgrade provider to `~4.16` to add support for `authenticator_groups_config`
