@@ -115,6 +115,13 @@ See [variables.tf] and [examples/] for details and use-cases.
   The ID of the project in which the resource belongs.
   If it is not set, the provider project is used.
 
+- [**`rbac_security_identity_group`**](#var-rbac_security_identity_group): *(Optional `string`)*<a name="var-rbac_security_identity_group"></a>
+
+  The name of the RBAC security identity group for use with Google
+  security groups in Kubernetes RBAC. Group name must be in format
+  `gke-security-groups@yourdomain.com`.
+  For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
+
 - [**`min_master_version`**](#var-min_master_version): *(Optional `string`)*<a name="var-min_master_version"></a>
 
   The minimum version of the Kubernetes master.

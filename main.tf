@@ -35,6 +35,14 @@ resource "google_container_cluster" "cluster" {
 
   cluster_ipv4_cidr = var.cluster_ipv4_cidr
 
+  dynamic "authenticator_groups_config" {
+    for_each = var.rbac_security_identity_group != null ? [1] : []
+
+    content {
+      security_group = var.rbac_security_identity_group
+    }
+  }
+
   dynamic "release_channel" {
     for_each = var.release_channel != null ? [1] : []
 

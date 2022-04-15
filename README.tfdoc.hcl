@@ -154,6 +154,16 @@ section {
         END
       }
 
+      variable "rbac_security_identity_group" {
+        type        = string
+        description = <<-END
+          The name of the RBAC security identity group for use with Google
+          security groups in Kubernetes RBAC. Group name must be in format
+          `gke-security-groups@yourdomain.com`.
+          For details please see https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac
+        END
+      }
+
       variable "min_master_version" {
         type        = string
         description = <<-END
