@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed minor version constraint from `versions.tf`
 
+### Changed
+
+- Remove redundant service account in unit-complete test
+
 ## [0.0.2]
 
 ### Added
