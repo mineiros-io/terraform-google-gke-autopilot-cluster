@@ -84,13 +84,6 @@ module "subnetwork" {
   ]
 }
 
-module "service-account" {
-  source = "github.com/mineiros-io/terraform-google-service-account?ref=v0.0.10"
-
-  account_id   = "gke-unit-complete"
-  display_name = "Service Account used in GKE unit test"
-}
-
 # module "router-nat" {
 #   source = "github.com/mineiros-io/terraform-google-cloud-router?ref=v0.0.2"
 
