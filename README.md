@@ -53,7 +53,7 @@ Most common usage of the module:
 
 ```hcl
 module "terraform-google-gke-autopilot-cluster" {
-  source = "git@github.com:mineiros-io/terraform-google-gke-autopilot-cluster.git?ref=v0.0.4"
+  source = "git@github.com:mineiros-io/terraform-google-gke-autopilot-cluster.git?ref=v0.0.3"
 
   name       = "gke-example"
   network    = "vpc_self_link"
