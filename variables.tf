@@ -258,6 +258,11 @@ variable "release_channel" {
   }
 }
 
+variable "node_config" {
+  type    = any
+  default = null
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 # MODULE CONFIGURATION PARAMETERS
 # These variables are used to configure the module.

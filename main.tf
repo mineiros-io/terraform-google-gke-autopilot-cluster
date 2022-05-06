@@ -208,6 +208,20 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+  dynamic "node_config" {
+    for_each = var.node_config != null ? [1] : []
+
+    content {
+      service_account = var.node_config.service_account
+      oauth_scopes    = try(var.node_config.oauth_scopes, ["https://www.googleapis.com/auth/cloud-platform"])
+
+      # labels = {
+      #   foo = "bar"
+      # }
+      # tags = ["foo", "bar"]
+    }
+  }
+
   lifecycle {
     ignore_changes = [
       node_pool,

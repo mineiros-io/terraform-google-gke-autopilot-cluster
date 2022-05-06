@@ -84,6 +84,13 @@ module "subnetwork" {
   ]
 }
 
+module "service-account" {
+  source = "github.com/mineiros-io/terraform-google-service-account?ref=v0.0.10"
+
+  account_id   = "gke-unit-complete"
+  display_name = "Service Account used in GKE unit test"
+}
+
 # module "router-nat" {
 #   source = "github.com/mineiros-io/terraform-google-cloud-router?ref=v0.0.2"
 
@@ -169,6 +176,10 @@ module "test" {
         end_time       = "2025-05-02T00:00:00Z"
       }
     ]
+  }
+
+  node_config = {
+    service_account = module.service-account.precomputed_email
   }
 
   module_timeouts = {
