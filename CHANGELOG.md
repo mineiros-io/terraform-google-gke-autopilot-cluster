@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for `node_pool_auto_config {}` with `network_tags`
+
+### Changed
+
+- BREAKING: Upgraded provider to `~> 4.34` to and switched to `beta` for adding support for `node_pool_auto_config`
+
 ## [0.0.3]
 
 ### Fixed
@@ -25,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
-- BREAKING: Upgrade provider to `~4.16` to add support for `authenticator_groups_config`
+- Upgrade provider to `~> 4.16` to add support for `authenticator_groups_config`
 
 ## [0.0.1]
 
