@@ -258,6 +258,17 @@ variable "release_channel" {
   }
 }
 
+variable "node_pool_auto_config" {
+  type = any
+  # type = object({
+  #   network_tags = object({
+  #     tags = list(string)
+  #   })
+  # })
+  description = "(Optional) Node pool configs that apply to auto-provisioned node pools in autopilot clusters and node auto-provisioning-enabled clusters."
+  default     = null
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 # MODULE CONFIGURATION PARAMETERS
 # These variables are used to configure the module.

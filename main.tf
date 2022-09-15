@@ -1,13 +1,7 @@
-data "google_project" "project" {}
-
-locals {
-  project = var.project != null ? var.project : data.google_project.project.project_id
-}
-
 resource "google_container_cluster" "cluster" {
   count = var.module_enabled ? 1 : 0
 
-  project = local.project
+  provider = google-beta
 
   enable_autopilot = true
 
@@ -205,6 +199,26 @@ resource "google_container_cluster" "cluster" {
     content {
       key_name = var.database_encryption_key_name
       state    = var.database_encryption_key_name != "" ? "ENCRYPTED" : "DECRYPTED"
+    }
+  }
+
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # AutoPilot node configuration
+  # --------------------------------------------------------------------------------------------------------------------
+
+
+  dynamic "node_pool_auto_config" {
+    for_each = var.node_pool_auto_config != null ? [var.node_pool_auto_config] : []
+
+    content {
+      dynamic "network_tags" {
+        for_each = try([node_pool_auto_config.value.network_tags], [])
+
+        content {
+          tags = try(network_tags.value.tags, null)
+        }
+      }
     }
   }
 
