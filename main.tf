@@ -3,6 +3,8 @@ resource "google_container_cluster" "cluster" {
 
   provider = google-beta
 
+  project = var.project
+
   enable_autopilot = true
 
   network    = var.network

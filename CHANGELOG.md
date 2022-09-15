@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- BREAKING: Upgraded provider to `~> 4.34` to and switched to `beta` for adding support for `node_pool_auto_config`
+- BREAKING: Upgraded provider to `~> 4.34` to and switched to `google-beta` Terraform Provider for adding support for `node_pool_auto_config`
 
 ## [0.0.3]
 

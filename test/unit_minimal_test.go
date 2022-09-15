@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -9,15 +10,29 @@ import (
 func TestUnitMinimal(t *testing.T) {
 	t.Parallel()
 
+	// only if the environment variables are set to non-empty they will be passed to terraform
+	vars := map[string]interface{}{
+		"gcp_project":         os.Getenv("TEST_GCP_PROJECT"),
+		"gcp_org_domain":      os.Getenv("TEST_GCP_ORG_DOMAIN"),
+		"gcp_billing_account": os.Getenv("TEST_GCP_BILLING_ACCOUNT"),
+	}
+
+	for key, value := range vars {
+		if value == "" {
+			delete(vars, key)
+		}
+	}
+
 	terraformOptions := &terraform.Options{
 		TerraformDir: "unit-minimal",
+		Vars:         vars,
 		Upgrade:      true,
 	}
 
 	defer terraform.Destroy(t, terraformOptions)
 
 	terraform.InitAndPlan(t, terraformOptions)
-	terraform.ApplyAndIdempotent(t, terraformOptions)
+	// terraform.ApplyAndIdempotent(t, terraformOptions)
 
 	// Replace ApplyAndIdempotent() check with below code if provider and terraform report output changes that
 	// can not be prevented due to some bugs in this feature
