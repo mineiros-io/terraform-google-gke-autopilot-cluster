@@ -41,7 +41,7 @@ section {
     Kubernetes Engine (GKE) cluster with autopilot enabled.
 
     **_This module supports Terraform version 1
-    and is compatible with the Terraform Google Provider version 4._**
+    and is compatible with the Terraform Google Provider Beta version ~> 4.34**
 
     This module is part of our Infrastructure as Code (IaC) framework
     that enables our users and customers to easily deploy and manage reusable,
@@ -185,6 +185,32 @@ section {
 
           **Note:** This field will only work for routes-based clusters, where
           `ip_allocation_policy` is not defined.
+        END
+      }
+
+      variable "enable_kubernetes_alpha" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether to enable Kubernetes Alpha features for this cluster.
+          Note that when this option is enabled, the cluster cannot be upgraded
+          and will be automatically deleted after 30 days.
+        END
+      }
+
+      variable "addon_horizontal_pod_autoscaling" {
+        type        = bool
+        default     = true
+        description = <<-END
+          Whether to enable the horizontal pod autoscaling addon.
+        END
+      }
+
+      variable "addon_http_load_balancing" {
+        type        = bool
+        default     = true
+        description = <<-END
+          Whether to enable the httpload balancer addon.
         END
       }
 
@@ -574,6 +600,38 @@ section {
           The release channel of this cluster. Accepted values are
           `RAPID`, `REGULAR` and `STABLE`.
         END
+      }
+      variable "node_pool_auto_config" {
+        type        = object(node_pool_auto_config)
+        default     = null
+        description = <<-END
+          Node pool configs that apply to auto-provisioned node pools
+          in autopilot clusters and node auto-provisioning-enabled clusters.
+        END
+
+        readme_example = <<-END
+          node_pool_auto_config = {
+            network_tags = {
+              tags = ["foo", "bar"]
+            }
+          }
+        END
+
+        attribute "network_tags" {
+          required    = false
+          type        = object(network_tags)
+          description = <<-END
+            Configures network tags on cluster
+          END
+
+          attribute "tags" {
+            required    = false
+            type        = list(string)
+            description = <<-END
+              List of tags to apply for all nodes managed by autopilot
+            END
+          }
+        }
       }
     }
 

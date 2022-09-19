@@ -12,7 +12,7 @@ A [Terraform](https://www.terraform.io) module to create and manage a Google
 Kubernetes Engine (GKE) cluster with autopilot enabled.
 
 **_This module supports Terraform version 1
-and is compatible with the Terraform Google Provider version 4._**
+and is compatible with the Terraform Google Provider Beta version ~> 4.34**
 
 This module is part of our Infrastructure as Code (IaC) framework
 that enables our users and customers to easily deploy and manage reusable,
@@ -139,6 +139,26 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   **Note:** This field will only work for routes-based clusters, where
   `ip_allocation_policy` is not defined.
+
+- [**`enable_kubernetes_alpha`**](#var-enable_kubernetes_alpha): *(Optional `bool`)*<a name="var-enable_kubernetes_alpha"></a>
+
+  Whether to enable Kubernetes Alpha features for this cluster.
+  Note that when this option is enabled, the cluster cannot be upgraded
+  and will be automatically deleted after 30 days.
+
+  Default is `false`.
+
+- [**`addon_horizontal_pod_autoscaling`**](#var-addon_horizontal_pod_autoscaling): *(Optional `bool`)*<a name="var-addon_horizontal_pod_autoscaling"></a>
+
+  Whether to enable the horizontal pod autoscaling addon.
+
+  Default is `true`.
+
+- [**`addon_http_load_balancing`**](#var-addon_http_load_balancing): *(Optional `bool`)*<a name="var-addon_http_load_balancing"></a>
+
+  Whether to enable the httpload balancer addon.
+
+  Default is `true`.
 
 - [**`ip_allocation_policy`**](#var-ip_allocation_policy): *(Optional `object(ip_allocation_policy)`)*<a name="var-ip_allocation_policy"></a>
 
@@ -453,6 +473,35 @@ See [variables.tf] and [examples/] for details and use-cases.
   `RAPID`, `REGULAR` and `STABLE`.
 
   Default is `"STABLE"`.
+
+- [**`node_pool_auto_config`**](#var-node_pool_auto_config): *(Optional `object(node_pool_auto_config)`)*<a name="var-node_pool_auto_config"></a>
+
+  Node pool configs that apply to auto-provisioned node pools
+  in autopilot clusters and node auto-provisioning-enabled clusters.
+
+  Default is `null`.
+
+  Example:
+
+  ```hcl
+  node_pool_auto_config = {
+    network_tags = {
+      tags = ["foo", "bar"]
+    }
+  }
+  ```
+
+  The `node_pool_auto_config` object accepts the following attributes:
+
+  - [**`network_tags`**](#attr-node_pool_auto_config-network_tags): *(Optional `object(network_tags)`)*<a name="attr-node_pool_auto_config-network_tags"></a>
+
+    Configures network tags on cluster
+
+    The `network_tags` object accepts the following attributes:
+
+    - [**`tags`**](#attr-node_pool_auto_config-network_tags-tags): *(Optional `list(string)`)*<a name="attr-node_pool_auto_config-network_tags-tags"></a>
+
+      List of tags to apply for all nodes managed by autopilot
 
 ### Module Configuration
 

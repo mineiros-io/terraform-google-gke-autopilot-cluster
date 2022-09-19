@@ -4,31 +4,6 @@
 # The purpose is to test all defaults for optional arguments and just provide the required arguments.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-variable "project" {
-  type        = string
-  description = "(Required) The ID of the project in which the resource belongs."
-}
-
-variable "region" {
-  type        = string
-  description = "(Optional) The GCP region to create all resources in."
-  default     = "europe-west3"
-}
-
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "4.16.0"
-    }
-  }
-}
-
-provider "google" {
-  project = var.project
-  region  = var.region
-}
-
 # Networking
 
 locals {
@@ -52,7 +27,7 @@ locals {
 module "vpc" {
   source = "github.com/mineiros-io/terraform-google-network-vpc?ref=v0.0.2"
 
-  project                         = var.project
+  project                         = local.project_id
   name                            = local.vpc_name
   delete_default_routes_on_create = false
 }
@@ -61,12 +36,12 @@ module "subnetwork" {
   source = "github.com/mineiros-io/terraform-google-network-subnet?ref=v0.0.2"
 
   network = module.vpc.vpc.self_link
-  project = var.project
+  project = local.project_id
 
   subnets = [
     {
       name                     = local.vpc_name
-      region                   = var.region
+      region                   = local.region
       ip_cidr_range            = local.subnet.cidr_range
       private_ip_google_access = true
 
@@ -88,10 +63,10 @@ module "test" {
   source = "../.."
 
   # add only required arguments and no optional arguments
-  name       = "gke-unit-minimal"
-  location   = var.region
+  name       = local.test_name
+  location   = local.region
   network    = module.vpc.vpc.self_link
-  subnetwork = module.subnetwork.subnetworks["${var.region}/${local.subnet.name}"].self_link
+  subnetwork = module.subnetwork.subnetworks["${local.region}/${local.subnet.name}"].self_link
 
   networking_mode        = "VPC_NATIVE"
   master_ipv4_cidr_block = "10.4.96.0/28"

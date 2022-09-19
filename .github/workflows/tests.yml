@@ -4,11 +4,8 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
-
-env:
-  GOOGLE_CREDENTIALS: ${{ secrets.MINEIROS_TESTING_GCP_SA_KEY_FILE }}
-  TF_VAR_project: ${{ secrets.MINEIROS_TESTING_GCP_PROJECT }}
 
 concurrency:
   group: terraform-google-gke-autopilot-cluster
@@ -20,31 +17,121 @@ jobs:
     name: Static Analysis
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        # for security reasons we pin commit ids and not tags.
+        # actions/checkout@v3.0.2 -> 2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          fetch-depth: 0
 
-      - name: Run pre-commit
-        run: make test/pre-commit
+      # - name: Setup SSH to Private Modules
+      #   # for security reasons we pin commit ids and not tags.
+      #   # webfactory/ssh-agent@v5.0.4 -> fc49353b67b2b7c1e0e6a600572d01a69f2672dd
+      #   uses: webfactory/ssh-agent@fc49353b67b2b7c1e0e6a600572d01a69f2672dd
+      #   with:
+      #     ssh-private-key: |
+      #       ${{ secrets.DEPLOY_KEY__REPOSITORY_A }}
+      #       ${{ secrets.DEPLOY_KEY__REPOSITORY_B }}
+
+      - name: Set up Golang
+        # for security reasons we pin commit ids and not tags.
+        # actions/setup-go@v3.2.0 -> b22fbbc2921299758641fab08929b4ac52b32923
+        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
+        with:
+          go-version: 1.17.6
+
+      - name: Set up Terramate
+        # for security reasons we pin commit ids and not tags.
+        # mineiros-io/terramate@v0.1.28 -> 8535f918c0905572d846d82aa3d0feee23388f98
+        run: go install github.com/mineiros-io/terramate/cmd/terramate@8535f918c0905572d846d82aa3d0feee23388f98
+        env:
+          GOPROXY: direct
+
+      - name: Set up Terradoc
+        # for security reasons we pin commit ids and not tags.
+        # mineiros-io/terradoc@main -> af1a7b3ae3635958adf5ee2f40e0c3e70fd0803a
+        run: go install github.com/mineiros-io/terradoc/cmd/terradoc@af1a7b3ae3635958adf5ee2f40e0c3e70fd0803a
+        env:
+          GOPROXY: direct
+
+      - name: Set up Terraform
+        # for security reasons we pin commit ids and not tags.
+        # hashicorp/setup-terraform@v2.0.0 -> 17d4c9b8043b238f6f35641cdd8433da1e6f3867
+        uses: hashicorp/setup-terraform@17d4c9b8043b238f6f35641cdd8433da1e6f3867
+        with:
+          terraform_version: 1.2.1
+          terraform_wrapper: false
+
+      - name: Setup TFLint
+        # for security reasons we pin commit ids and not tags.
+        # terraform-linters/setup-tflint@v2.0.0 -> 9e653e0f7de0839150e03280e0981e0c25eaf10a
+        uses: terraform-linters/setup-tflint@9e653e0f7de0839150e03280e0981e0c25eaf10a
+        with:
+          tflint_version: v0.29.0
+
+      - name: Setup and run pre-commit
+        # for security reasons we pin commit ids and not tags.
+        # pre-commit/action@v2.0.3 -> 9b88afc9cd57fd75b655d5c71bd38146d07135fe
+        uses: pre-commit/action@9b88afc9cd57fd75b655d5c71bd38146d07135fe
 
   unit-tests:
-    needs: pre-commit
+    # needs: pre-commit
     runs-on: ubuntu-latest
     name: Unit Tests
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        # for security reasons we pin commit ids and not tags.
+        # actions/checkout@v3.0.2 -> 2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          fetch-depth: 0
+
+      # - name: Setup SSH to Private Modules
+      #   # for security reasons we pin commit ids and not tags.
+      #   # webfactory/ssh-agent@v5.0.4 -> fc49353b67b2b7c1e0e6a600572d01a69f2672dd
+      #   uses: webfactory/ssh-agent@fc49353b67b2b7c1e0e6a600572d01a69f2672dd
+      #   with:
+      #     ssh-private-key: |
+      #       ${{ secrets.DEPLOY_KEY__REPOSITORY_A }}
+      #       ${{ secrets.DEPLOY_KEY__REPOSITORY_B }}
 
       - name: Check for Terraform file changes
-        uses: getsentry/paths-filter@v2
+        # for security reasons we pin commit ids and not tags.
+        # getsentry/paths-filter@v2.10.2 -> b2feaf19c27470162a626bd6fa8438ae5b263721
+        uses: getsentry/paths-filter@b2feaf19c27470162a626bd6fa8438ae5b263721
         id: changes
         with:
-          token: ${{ github.token }}
           filters: |
             terraform:
-              - '**/*.tf'
-              - '**/*.go'
-              - 'go.mod'
-              - 'go.sum'
+              - '*.tf'
+              - 'test/**/*.tf'
+              - 'test/**/*.go'
+              - 'test/go.mod'
+              - 'test/go.sum'
+
+      - name: Set up Terraform
+        if: steps.changes.outputs.terraform == 'true'
+        # for security reasons we pin commit ids and not tags.
+        # hashicorp/setup-terraform@v2.0.0 -> 17d4c9b8043b238f6f35641cdd8433da1e6f3867
+        uses: hashicorp/setup-terraform@17d4c9b8043b238f6f35641cdd8433da1e6f3867
+        with:
+          terraform_version: 1.2.1
+          terraform_wrapper: false
+
+      - name: Set up Golang
+        if: steps.changes.outputs.terraform == 'true'
+        # for security reasons we pin commit ids and not tags.
+        # actions/setup-go@v3.2.0 -> b22fbbc2921299758641fab08929b4ac52b32923
+        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923
+        with:
+          go-version: 1.17.6
 
       - name: Run Unit Tests
         if: steps.changes.outputs.terraform == 'true'
         run: make test/unit-tests
+        env:
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MINEIROS_TESTING_AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.MINEIROS_TESTING_AWS_ACCESS_KEY_ID }}
+          GOOGLE_CREDENTIALS: ${{ secrets.MINEIROS_TESTING_GCP_SA_KEY_FILE }}
+          TEST_GCP_PROJECT: ${{ secrets.MINEIROS_TESTING_GCP_PROJECT }}
+          TEST_GCP_ORG_DOMAIN: ${{ secrets.MINEIROS_TESTING_GCP_ORG_DOMAIN }}
+          TEST_GCP_BILLING_ACCOUNT: ${{ secrets.MINEIROS_TESTING_GCP_BILLING_ACCOUNT }}
