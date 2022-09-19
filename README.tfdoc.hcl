@@ -41,7 +41,7 @@ section {
     Kubernetes Engine (GKE) cluster with autopilot enabled.
 
     **_This module supports Terraform version 1
-    and is compatible with the Terraform Google Provider Beta version ~> 4.34**
+    and is compatible with the Terraform Google Provider Beta version ~> 4.34_**
 
     This module is part of our Infrastructure as Code (IaC) framework
     that enables our users and customers to easily deploy and manage reusable,
