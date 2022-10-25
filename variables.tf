@@ -122,15 +122,16 @@ variable "logging_service" {
   }
 }
 
-variable "monitoring_enable_components" {
-  type        = set(string)
-  description = "(Optional) A list of GKE components exposing logs. Supported values include: 'SYSTEM_COMPONENTS' and in beta provider, both 'SYSTEM_COMPONENTS' and 'WORKLOADS' are supported."
-  default     = null
-
-  validation {
-    condition     = var.monitoring_enable_components != null ? alltrue([for c in var.monitoring_enable_components : can(regex("^SYSTEM_COMPONENTS|WORKLOADS$", c))]) : true
-    error_message = "The monitoring_enable_components variable must be a list with the values 'SYSTEM_COMPONENTS' and/or 'WORKLOADS'."
-  }
+variable "monitoring_config" {
+  type = any
+  # type = object({
+  #   enable_components = optional(list(string))
+  #   managed_prometheus = optional(object({
+  #     enabled = optional(bool)
+  #   }))
+  # })
+  description = "(Optional) A block for configuring monitoring for the GKE cluster. Contains `enable_components` and `managed_prometheus`"
+  default     = {}
 }
 
 variable "monitoring_service" {

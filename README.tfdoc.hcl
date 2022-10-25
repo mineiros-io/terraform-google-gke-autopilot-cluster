@@ -519,12 +519,45 @@ section {
         END
       }
 
-      variable "monitoring_enable_components" {
-        type        = set(string)
+      variable "monitoring_config" {
+        type        = object(monitoring_config)
         description = <<-END
-          A list of GKE components exposing logs.
-          Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
+          A block for configuring monitoring for the GKE cluster.
+          Contains `enable_components` and `managed_prometheus`.
         END
+
+        readme_example = <<-END
+          monitoring_config = {
+            enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+            managed_prometheus = {
+              enabled = false
+            }
+          }
+        END
+
+        attribute "enable_components" {
+          type        = list(string)
+          description = <<-END
+            The GKE components exposing metrics.
+            Supported values include: SYSTEM_COMPONENTS, APISERVER, CONTROLLER_MANAGER, and SCHEDULER.
+            In beta provider, WORKLOADS is supported on top of those 4 values.
+            (WORKLOADS is deprecated and removed in GKE 1.24.)
+          END
+        }
+
+        attribute "managed_prometheus" {
+          type        = object(managed_prometheus)
+          description = <<-END
+            Configures managed Prometheus for this cluster.
+          END
+
+          attribute "enabled" {
+            type        = bool
+            description = <<-END
+              Specifies whether managed Prometheus is enabled.
+            END
+          }
+        }
       }
 
       variable "monitoring_service" {
@@ -720,13 +753,6 @@ section {
       description = <<-END
         All arguments in `google_container_cluster`.
       END
-    }
-
-    output "module_enabled" {
-      type        = bool
-      description = <<-END
-          Whether this module is enabled.
-        END
     }
   }
 

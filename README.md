@@ -413,10 +413,40 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `"logging.googleapis.com/kubernetes"`.
 
-- [**`monitoring_enable_components`**](#var-monitoring_enable_components): *(Optional `set(string)`)*<a name="var-monitoring_enable_components"></a>
+- [**`monitoring_config`**](#var-monitoring_config): *(Optional `object(monitoring_config)`)*<a name="var-monitoring_config"></a>
 
-  A list of GKE components exposing logs.
-  Supported values include: `SYSTEM_COMPONENTS` and `WORKLOADS`.
+  A block for configuring monitoring for the GKE cluster.
+  Contains `enable_components` and `managed_prometheus`.
+
+  Example:
+
+  ```hcl
+  monitoring_config = {
+    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    managed_prometheus = {
+      enabled = false
+    }
+  }
+  ```
+
+  The `monitoring_config` object accepts the following attributes:
+
+  - [**`enable_components`**](#attr-monitoring_config-enable_components): *(Optional `list(string)`)*<a name="attr-monitoring_config-enable_components"></a>
+
+    The GKE components exposing metrics.
+    Supported values include: SYSTEM_COMPONENTS, APISERVER, CONTROLLER_MANAGER, and SCHEDULER.
+    In beta provider, WORKLOADS is supported on top of those 4 values.
+    (WORKLOADS is deprecated and removed in GKE 1.24.)
+
+  - [**`managed_prometheus`**](#attr-monitoring_config-managed_prometheus): *(Optional `object(managed_prometheus)`)*<a name="attr-monitoring_config-managed_prometheus"></a>
+
+    Configures managed Prometheus for this cluster.
+
+    The `managed_prometheus` object accepts the following attributes:
+
+    - [**`enabled`**](#attr-monitoring_config-managed_prometheus-enabled): *(Optional `bool`)*<a name="attr-monitoring_config-managed_prometheus-enabled"></a>
+
+      Specifies whether managed Prometheus is enabled.
 
 - [**`monitoring_service`**](#var-monitoring_service): *(Optional `string`)*<a name="var-monitoring_service"></a>
 
@@ -570,10 +600,6 @@ The following attributes are exported in the outputs of the module:
 - [**`cluster`**](#output-cluster): *(`object(cluster)`)*<a name="output-cluster"></a>
 
   All arguments in `google_container_cluster`.
-
-- [**`module_enabled`**](#output-module_enabled): *(`bool`)*<a name="output-module_enabled"></a>
-
-  Whether this module is enabled.
 
 ## External Documentation
 

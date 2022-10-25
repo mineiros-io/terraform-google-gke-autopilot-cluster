@@ -24,12 +24,3 @@ output "cluster" {
   description = "All attributes of the created `google_container_cluster` resource."
   value       = try(google_container_cluster.cluster[0], null)
 }
-
-# ----------------------------------------------------------------------------------------------------------------------
-# OUTPUT MODULE CONFIGURATION
-# ----------------------------------------------------------------------------------------------------------------------
-
-output "module_enabled" {
-  description = "Whether or not the module is enabled."
-  value       = var.module_enabled
-}
