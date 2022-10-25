@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for `monitoring_config` block
+- Add support for `managed_prometheus` block inside `monitoring_config`
+
+### Removed
+
+- BREAKING CHANGE: Remove variable `monitoring_enable_components`
+- BREAKING CHANGE: Remove `var.module_enabled` output
+
+  ###### old format
+
+  ```
+  monitoring_enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+  ```
+
+  ###### new format
+  ```
+  monitoring_config = {
+    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    managed_prometheus = {
+      enabled = false
+    }
+  }
+  ```
+
 ## [0.0.4]
 
 ### Added
@@ -21,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Removed minor version constraint from `versions.tf`
+- Remove minor version constraint from `versions.tf`
 
 ### Changed
 
