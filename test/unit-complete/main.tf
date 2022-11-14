@@ -121,10 +121,15 @@ module "test" {
     ]
   }
 
-  logging_enable_components    = ["SYSTEM_COMPONENTS", "WORKLOADS"]
-  logging_service              = "logging.googleapis.com/kubernetes"
-  monitoring_service           = "monitoring.googleapis.com/kubernetes"
-  monitoring_enable_components = ["SYSTEM_COMPONENTS"]
+  logging_enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+  logging_service           = "logging.googleapis.com/kubernetes"
+  monitoring_service        = "monitoring.googleapis.com/kubernetes"
+  monitoring_config = {
+    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER"]
+    managed_prometheus = {
+      enabled = true
+    }
+  }
 
   release_channel = "RAPID"
 
@@ -215,10 +220,15 @@ module "test2" {
     ]
   }
 
-  logging_enable_components    = ["SYSTEM_COMPONENTS", "WORKLOADS"]
-  logging_service              = "logging.googleapis.com/kubernetes"
-  monitoring_service           = "monitoring.googleapis.com/kubernetes"
-  monitoring_enable_components = ["SYSTEM_COMPONENTS"]
+  logging_enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+  logging_service           = "logging.googleapis.com/kubernetes"
+  monitoring_service        = "monitoring.googleapis.com/kubernetes"
+  monitoring_config = {
+    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    managed_prometheus = {
+      enabled = false
+    }
+  }
 
   release_channel = "RAPID"
 

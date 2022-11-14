@@ -56,10 +56,18 @@ resource "google_container_cluster" "cluster" {
   }
 
   dynamic "monitoring_config" {
-    for_each = var.monitoring_enable_components != null ? [1] : []
+    for_each = var.monitoring_config != null ? [var.monitoring_config] : []
 
     content {
-      enable_components = var.monitoring_enable_components
+      enable_components = try(monitoring_config.value.enable_components, null)
+
+      dynamic "managed_prometheus" {
+        for_each = try([monitoring_config.value.managed_prometheus], [])
+
+        content {
+          enabled = managed_prometheus.value.enabled
+        }
+      }
     }
   }
 
